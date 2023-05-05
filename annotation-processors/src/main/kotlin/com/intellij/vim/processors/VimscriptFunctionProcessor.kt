@@ -31,22 +31,14 @@ class VimscriptFunctionProcessor(private val environment: SymbolProcessorEnviron
   }
   private val visitor = VimscriptFunctionVisitor()
   private val writer = FileWriter()
-  private val nameToFunction = mutableMapOf<String, KSClassDeclaration>()
+  private val nameToClass = mutableMapOf<String, String>()
 
 
   override fun process(resolver: Resolver): List<KSAnnotated> {
     resolver.getAllFiles().forEach { it.accept(visitor, Unit) }
     val filePath = environment.options["generated_directory"]!! + "/" + environment.options["vimscript_functions_file"]!!
-    writer.writeFile(filePath, generateFunctionFileContent())
+    writer.writeFile(filePath, writer.getYAML(comment, nameToClass))
     return emptyList()
-  }
-
-  private fun generateFunctionFileContent(): String {
-    val options = DumperOptions()
-    options.defaultFlowStyle = DumperOptions.FlowStyle.BLOCK
-    val yaml = Yaml(options)
-    val nameToClass = nameToFunction.map { it.key to it.value.qualifiedName!!.asString() }.toMap()
-    return comment + yaml.dump(nameToClass)
   }
 
   // todo inspection that annotation is properly used on proper classes
@@ -55,7 +47,7 @@ class VimscriptFunctionProcessor(private val environment: SymbolProcessorEnviron
     override fun visitClassDeclaration(classDeclaration: KSClassDeclaration, data: Unit) {
       val vimscriptFunctionAnnotation = classDeclaration.getAnnotationsByType(VimscriptFunction::class).firstOrNull() ?: return
       val functionName = vimscriptFunctionAnnotation.name
-      nameToFunction[functionName] = classDeclaration
+      nameToClass[functionName] = classDeclaration.qualifiedName!!.asString()
     }
 
     override fun visitFile(file: KSFile, data: Unit) {
