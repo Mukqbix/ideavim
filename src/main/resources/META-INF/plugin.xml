@@ -119,7 +119,6 @@
   <xi:include href="/META-INF/includes/VimActions.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/includes/VimExtensions.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/includes/VimListeners.xml" xpointer="xpointer(/idea-plugin/*)"/>
-  <xi:include href="/META-INF/includes/VimLibraryFunctions.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <actions resource-bundle="messages.IdeaVimBundle">
     <action id="VimPluginToggle" class="com.maddyhome.idea.vim.action.VimPluginToggleAction">
