@@ -8,13 +8,11 @@
 
 package com.intellij.vim
 
-import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import java.io.File
 
 class FileWriter {
-  fun generateResourceFile(fileName: String, content: String, environment: SymbolProcessorEnvironment) {
-    val resourcesDir = environment.options["generated_directory"]
-    val file = File("$resourcesDir/$fileName")
+  fun writeFile(filePath: String, content: String) {
+    val file = File(filePath)
     file.writeText(content)
   }
 }

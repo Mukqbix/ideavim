@@ -36,18 +36,17 @@ class VimscriptFunctionProcessor(private val environment: SymbolProcessorEnviron
 
   override fun process(resolver: Resolver): List<KSAnnotated> {
     resolver.getAllFiles().forEach { it.accept(visitor, Unit) }
-    writer.generateResourceFile(environment.options["vimscript_functions_file"]!!, generateFunctionDict(), environment)
+    val filePath = environment.options["generated_directory"]!! + "/" + environment.options["vimscript_functions_file"]!!
+    writer.writeFile(filePath, generateFunctionFileContent())
     return emptyList()
   }
 
-  private fun generateFunctionDict(): String {
+  private fun generateFunctionFileContent(): String {
     val options = DumperOptions()
     options.defaultFlowStyle = DumperOptions.FlowStyle.BLOCK
     val yaml = Yaml(options)
-    val dictToWrite: Map<String, String> = nameToFunction
-      .map { it.key to it.value.qualifiedName!!.asString() }
-      .toMap()
-    return comment + yaml.dump(dictToWrite)
+    val nameToClass = nameToFunction.map { it.key to it.value.qualifiedName!!.asString() }.toMap()
+    return comment + yaml.dump(nameToClass)
   }
 
   // todo inspection that annotation is properly used on proper classes
